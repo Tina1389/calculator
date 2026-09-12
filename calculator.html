@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ماشین حساب رنگی رنگی</title>
+<style>
+  body {
+    background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  .calculator {
+    background: #282c34;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    width: 320px;
+    padding: 20px;
+    color: white;
+  }
+  .display {
+    background: #1e2228;
+    height: 60px;
+    border-radius: 15px;
+    font-size: 2rem;
+    text-align: right;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    color: #00ffea;
+    overflow-x: auto;
+  }
+  .buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+  }
+  button {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+    border: none;
+    border-radius: 15px;
+    font-size: 1.3rem;
+    color: #222;
+    cursor: pointer;
+    padding: 15px 0;
+    box-shadow: 0 5px 10px rgba(255, 154, 158, 0.6);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  button.operator {
+    background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+    color: #064273;
+    box-shadow: 0 5px 10px rgba(161, 196, 253, 0.7);
+  }
+  button.zero {
+    grid-column: span 2;
+  }
+  button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 15px rgba(255, 154, 158, 0.8);
+  }
+</style>
+</head>
+<body>
+  <div class="calculator">
+    <div id="display" class="display">0</div>
+    <div class="buttons">
+      <button class="operator" onclick="clearDisplay()">C</button>
+      <button class="operator" onclick="deleteLast()">⌫</button>
+      <button class="operator" onclick="appendOperator('%')">%</button>
+      <button class="operator" onclick="appendOperator('/')">÷</button>
+
+      <button onclick="appendNumber('7')">7</button>
+      <button onclick="appendNumber('8')">8</button>
+      <button onclick="appendNumber('9')">9</button>
+      <button class="operator" onclick="appendOperator('*')">×</button>
+
+      <button onclick="appendNumber('4')">4</button>
+      <button onclick="appendNumber('5')">5</button>
+      <button onclick="appendNumber('6')">6</button>
+      <button class="operator" onclick="appendOperator('-')">−</button>
+
+      <button onclick="appendNumber('1')">1</button>
+      <button onclick="appendNumber('2')">2</button>
+      <button onclick="appendNumber('3')">3</button>
+      <button class="operator" onclick="appendOperator('+')">+</button>
+
+      <button class="zero" onclick="appendNumber('0')">0</button>
+      <button onclick="appendNumber('.')">.</button>
+      <button class="operator" onclick="calculate()">=</button>
+    </div>
+  </div>
+
+<script>
+  const display = document.getElementById('display');
+  let currentInput = '';
+
+  function appendNumber(num) {
+    if (currentInput === '0' && num === '0') return;
+    if (currentInput === '0' && num !== '.') {
+      currentInput = num;
+    } else {
+      currentInput += num;
+    }
+    updateDisplay();
+  }
+
+  function appendOperator(op) {
+    if (currentInput === '' && op !== '-') return;
+    const lastChar = currentInput.slice(-1);
+    if ('+-*/%'.includes(lastChar)) {
+      currentInput = currentInput.slice(0, -1) + op;
+    } else {
+      currentInput += op;
+    }
+    updateDisplay();
+  }
+
+  function clearDisplay() {
+    currentInput = '';
+    updateDisplay();
+  }
+
+  function deleteLast() {
+    currentInput = currentInput.slice(0, -1);
+    updateDisplay();
+  }
+
+  function calculate() {
+    try {
+      if (currentInput === '') return;
+      // تبدیل % به تقسیم بر 100
+      let expression = currentInput.replace(/%/g, '/100');
+      let result = eval(expression);
+      currentInput = result.toString();
+      updateDisplay();
+    } catch {
+      display.textContent = 'خطا!';
+      currentInput = '';
+    }
+  }
+
+  function updateDisplay() {
+    display.textContent = currentInput || '0';
+  }
+</script>
+</body>
+</html>
